@@ -12,10 +12,18 @@ import com.example.micha.musicplayertut.util.PlayerConstants;
 
 public class NotificationBroadcast extends BroadcastReceiver {
 
+	public String ComponentName() {
+		return this.getClass().getName();
+	}
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
+
+		/**
 		if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
+
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
+
             if (keyEvent.getAction() != KeyEvent.ACTION_DOWN)
                 return;
 
@@ -59,10 +67,10 @@ public class NotificationBroadcast extends BroadcastReceiver {
         		}else if (intent.getAction().equals(SongService.NOTIFY_PREVIOUS)) {
     				Controls.previousControl(context);
         		}
-		}
+		}**/
+
+
 	}
 	
-	public String ComponentName() {
-		return this.getClass().getName(); 
-	}
+
 }

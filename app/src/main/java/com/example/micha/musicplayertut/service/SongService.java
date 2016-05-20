@@ -43,15 +43,15 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 	public static final String NOTIFY_PAUSE = "com.tutorialsface.audioplayer.pause";
 	public static final String NOTIFY_PLAY = "com.tutorialsface.audioplayer.play";
 	public static final String NOTIFY_NEXT = "com.tutorialsface.audioplayer.next";
-	
+
 	private ComponentName remoteComponentName;
 	private RemoteControlClient remoteControlClient;
 	AudioManager audioManager;
 	Bitmap mDummyAlbumArt;
-	private static Timer timer; 
+	private static Timer timer;
 	private static boolean currentVersionSupportBigNotification = false;
 	private static boolean currentVersionSupportLockScreenControls = false;
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -60,15 +60,15 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 	@Override
 	public void onCreate() {
 		mp = new MediaPlayer();
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        
-        currentVersionSupportBigNotification = UtilFunctions.currentVersionSupportBigNotification();
-        currentVersionSupportLockScreenControls = UtilFunctions.currentVersionSupportLockScreenControls();
-        timer = new Timer();
-        mp.setOnCompletionListener(new OnCompletionListener() {
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+		currentVersionSupportBigNotification = UtilFunctions.currentVersionSupportBigNotification();
+		currentVersionSupportLockScreenControls = UtilFunctions.currentVersionSupportLockScreenControls();
+		timer = new Timer();
+		mp.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void onCompletion(MediaPlayer mp) {
-				Controls.nextControl(getApplicationContext());		
+				Controls.nextControl(getApplicationContext());
 			}
 		});
 		super.onCreate();
@@ -78,29 +78,29 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 	 * Send message from timer
 	 * @author jonty.ankit
 	 */
-	private class MainTask extends TimerTask{ 
-        public void run(){
-            handler.sendEmptyMessage(0);
-        }
-    } 
-	
-	 private final Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg){
-        	if(mp != null){
-        		int progress = (mp.getCurrentPosition()*100) / mp.getDuration();
-        		Integer i[] = new Integer[3];
-        		i[0] = mp.getCurrentPosition();
-        		i[1] = mp.getDuration();
-        		i[2] = progress;
-        		try{
-        			PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0, i));
-        		}catch(Exception e){}
-        	}
-    	}
-    }; 
-	    
-    @SuppressLint("NewApi")
+	private class MainTask extends TimerTask{
+		public void run(){
+			handler.sendEmptyMessage(0);
+		}
+	}
+
+	private final Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg){
+			if(mp != null){
+				int progress = (mp.getCurrentPosition()*100) / mp.getDuration();
+				Integer i[] = new Integer[3];
+				i[0] = mp.getCurrentPosition();
+				i[1] = mp.getDuration();
+				i[2] = progress;
+				try{
+					PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0, i));
+				}catch(Exception e){}
+			}
+		}
+	};
+
+	@SuppressLint("NewApi")
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		try {
@@ -114,7 +114,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 			String songPath = data.getPath();
 			playSong(songPath, data);
 			newNotification();
-			
+
 			PlayerConstants.SONG_CHANGE_HANDLER = new Handler(new Callback() {
 				@Override
 				public boolean handleMessage(Message msg) {
@@ -131,7 +131,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 					return false;
 				}
 			});
-			
+
 			PlayerConstants.PLAY_PAUSE_HANDLER = new Handler(new Callback() {
 				@Override
 				public boolean handleMessage(Message msg) {
@@ -160,7 +160,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 					return false;
 				}
 			});
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -177,19 +177,19 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 		String albumName = PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).getAlbum();
 		RemoteViews simpleContentView = new RemoteViews(getApplicationContext().getPackageName(),R.layout.custom_notification);
 		RemoteViews expandedView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_notification);
-		 
+
 		Notification notification = new NotificationCompat.Builder(getApplicationContext())
-        .setSmallIcon(R.drawable.ic_music)
-        .setContentTitle(songName).build();
+				.setSmallIcon(R.drawable.ic_music)
+				.setContentTitle(songName).build();
 
 		setListeners(simpleContentView);
 		setListeners(expandedView);
-		
+
 		notification.contentView = simpleContentView;
 		if(currentVersionSupportBigNotification){
 			notification.bigContentView = expandedView;
 		}
-		
+
 		try{
 			long albumId = PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).getAlbumId();
 			Bitmap albumArt = UtilFunctions.getAlbumart(getApplicationContext(), albumId);
@@ -234,7 +234,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		startForeground(NOTIFICATION_ID, notification);
 	}
-	
+
 	/**
 	 * Notification click listeners
 	 * @param view
@@ -245,24 +245,24 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 		Intent pause = new Intent(NOTIFY_PAUSE);
 		Intent next = new Intent(NOTIFY_NEXT);
 		Intent play = new Intent(NOTIFY_PLAY);
-		
+
 		PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
 		view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
 
 		PendingIntent pDelete = PendingIntent.getBroadcast(getApplicationContext(), 0, delete, PendingIntent.FLAG_UPDATE_CURRENT);
 		view.setOnClickPendingIntent(R.id.btnDelete, pDelete);
-		
+
 		PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
 		view.setOnClickPendingIntent(R.id.btnPause, pPause);
-		
+
 		PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
 		view.setOnClickPendingIntent(R.id.btnNext, pNext);
-		
+
 		PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
 		view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
 
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		if(mp != null){
@@ -296,26 +296,26 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 	@SuppressLint("NewApi")
 	private void RegisterRemoteClient(){
 		remoteComponentName = new ComponentName(getApplicationContext(), new NotificationBroadcast().ComponentName());
-		 try {
-		   if(remoteControlClient == null) {
-			   audioManager.registerMediaButtonEventReceiver(remoteComponentName);
-			   Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-			   mediaButtonIntent.setComponent(remoteComponentName);
-			   PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(this, 0, mediaButtonIntent, 0);
-			   remoteControlClient = new RemoteControlClient(mediaPendingIntent);
-			   audioManager.registerRemoteControlClient(remoteControlClient);
-		   }
-		   remoteControlClient.setTransportControlFlags(
-				   RemoteControlClient.FLAG_KEY_MEDIA_PLAY |
-				   RemoteControlClient.FLAG_KEY_MEDIA_PAUSE |
-				   RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE |
-				   RemoteControlClient.FLAG_KEY_MEDIA_STOP |
-				   RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS |
-				   RemoteControlClient.FLAG_KEY_MEDIA_NEXT);
-	  }catch(Exception ex) {
-	  }
+		try {
+			if(remoteControlClient == null) {
+				audioManager.registerMediaButtonEventReceiver(remoteComponentName);
+				Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+				mediaButtonIntent.setComponent(remoteComponentName);
+				PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(this, 0, mediaButtonIntent, 0);
+				remoteControlClient = new RemoteControlClient(mediaPendingIntent);
+				audioManager.registerRemoteControlClient(remoteControlClient);
+			}
+			remoteControlClient.setTransportControlFlags(
+					RemoteControlClient.FLAG_KEY_MEDIA_PLAY |
+							RemoteControlClient.FLAG_KEY_MEDIA_PAUSE |
+							RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE |
+							RemoteControlClient.FLAG_KEY_MEDIA_STOP |
+							RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS |
+							RemoteControlClient.FLAG_KEY_MEDIA_NEXT);
+		}catch(Exception ex) {
+		}
 	}
-	
+
 	@SuppressLint("NewApi")
 	private void UpdateMetadata(MediaItem data){
 		if (remoteControlClient == null)
@@ -328,7 +328,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 		if(mDummyAlbumArt == null){
 			mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.default_album_art);
 		}
-		metadataEditor.putBitmap(MetadataEditor.BITMAP_KEY_ARTWORK, mDummyAlbumArt);
+		metadataEditor.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, mDummyAlbumArt);
 		metadataEditor.apply();
 		audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 	}

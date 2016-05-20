@@ -28,6 +28,7 @@ import com.example.micha.musicplayertut.util.PlayerConstants;
 import com.example.micha.musicplayertut.util.UtilFunctions;
 
 public class MainActivity extends Activity {
+
 	String LOG_CLASS = "MainActivity";
 	CustomAdapter customAdapter = null;
 	static TextView playingSong;
@@ -48,6 +49,7 @@ public class MainActivity extends Activity {
 		getActionBar().hide();
 		setContentView(R.layout.activity_main);
 		context = MainActivity.this;
+
 		init();
 	}
 	
