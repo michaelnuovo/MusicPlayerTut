@@ -35,9 +35,12 @@ import com.example.micha.musicplayertut.util.PlayerConstants;
 import com.example.micha.musicplayertut.util.UtilFunctions;
 
 public class SongService extends Service implements AudioManager.OnAudioFocusChangeListener{
+
 	String LOG_CLASS = "SongService";
+
 	private MediaPlayer mp;
 	int NOTIFICATION_ID = 1111;
+
 	public static final String NOTIFY_PREVIOUS = "com.tutorialsface.audioplayer.previous";
 	public static final String NOTIFY_DELETE = "com.tutorialsface.audioplayer.delete";
 	public static final String NOTIFY_PAUSE = "com.tutorialsface.audioplayer.pause";
@@ -115,6 +118,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 			playSong(songPath, data);
 			newNotification();
 
+
 			PlayerConstants.SONG_CHANGE_HANDLER = new Handler(new Callback() {
 				@Override
 				public boolean handleMessage(Message msg) {
@@ -160,6 +164,8 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 					return false;
 				}
 			});
+
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -240,6 +246,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 	 * @param view
 	 */
 	public void setListeners(RemoteViews view) {
+
 		Intent previous = new Intent(NOTIFY_PREVIOUS);
 		Intent delete = new Intent(NOTIFY_DELETE);
 		Intent pause = new Intent(NOTIFY_PAUSE);

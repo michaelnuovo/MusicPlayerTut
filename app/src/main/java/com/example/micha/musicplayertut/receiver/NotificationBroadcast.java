@@ -19,7 +19,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		/**
+
 		if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
 
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
@@ -67,7 +67,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
         		}else if (intent.getAction().equals(SongService.NOTIFY_PREVIOUS)) {
     				Controls.previousControl(context);
         		}
-		}**/
+		}
 
 
 	}
